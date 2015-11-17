@@ -5,6 +5,8 @@
  */
 package filesearcher.forms;
 
+import wheeler.generic.data.DialogFactory;
+
 /**
  *
  * @author Greg
@@ -16,6 +18,45 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
+    }
+    
+    /**
+     * Ask the user to choose the root of the search
+     */
+    private void setSearchRoot(){
+        String root = DialogFactory.chooseFolder(this, txtRoot.getText());
+        if (root == null) return;
+        txtRoot.setText(root);
+    }
+    
+    /**
+     * Enable/disable the "line" portion of the interface based on whether the search is for files or lines
+     * @param setEnabled Are lines within files the subject of the search?
+     */
+    private void setSearchLineEnabled(boolean setEnabled){
+        txtLine.setEnabled(setEnabled);
+        chkExclude.setEnabled(setEnabled);
+        txtExclude.setEnabled(setEnabled && chkExclude.isSelected());
+        chkHide.setEnabled(setEnabled);
+        chkCase.setEnabled(setEnabled);
+        chkRegex.setEnabled(setEnabled);
+        btnFind.setText((setEnabled) ? "Find Lines" : "Find Files");
+    }
+    
+    /**
+     * Enable/disable the field for line exclusions
+     * @param setEnabled Are lines being excluded from the results?
+     */
+    private void setExcludeLineEnabled(boolean setEnabled){
+        txtExclude.setEnabled(setEnabled);
+    }
+    
+    /**
+     * Set the line-field label according to the type of search string being provided
+     * @param setEnabled Is the search being performed using a regular expression?
+     */
+    private void setSearchByRegex(boolean setEnabled){
+        lblLine.setText((setEnabled) ? "Line matches:" : "Line contains:");
     }
 
     /**
@@ -72,24 +113,37 @@ public class Main extends javax.swing.JFrame {
 
         btnRoot.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnRoot.setText("Choose");
+        btnRoot.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRootActionPerformed(evt);
+            }
+        });
 
         lblName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lblName.setText("Filename");
 
         txtName.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtName.setToolTipText("String(s) that must occur within the filename. If desired, starting with '-' can be used to exclude files.");
 
         lblPath.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lblPath.setText("Path");
 
         txtPath.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPath.setToolTipText("String(s) that must occur within the filepath. If desired, starting with '-' can be used to exclude files (also excludes sub-directories if it's a folder).");
 
         lblTypes.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lblTypes.setText("Filetypes");
 
         txtTypes.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTypes.setToolTipText("The filepath must end with one of these strings. If any are provided, folders will automatically be excluded unless '\\' is specified. If desired, starting with '-' can be used to exclude files.");
 
         chkLine.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         chkLine.setText("Find lines within files");
+        chkLine.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkLineActionPerformed(evt);
+            }
+        });
 
         lblLine.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         lblLine.setText("Line contains:");
@@ -99,24 +153,38 @@ public class Main extends javax.swing.JFrame {
 
         chkExclude.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkExclude.setText("Exclude:");
+        chkExclude.setToolTipText("Exclude lines that match the search string but also this one");
         chkExclude.setEnabled(false);
+        chkExclude.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkExcludeActionPerformed(evt);
+            }
+        });
 
         txtExclude.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtExclude.setEnabled(false);
 
         chkHide.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         chkHide.setText("Hide lines");
+        chkHide.setToolTipText("Hides matching lines in the output file, printing only the file's path");
         chkHide.setEnabled(false);
         chkHide.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
         chkCase.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         chkCase.setText("Check case");
+        chkCase.setToolTipText("Toggle case-sensitivity");
         chkCase.setEnabled(false);
 
         chkRegex.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         chkRegex.setText("Regular expression");
+        chkRegex.setToolTipText("Is the search string a regular expression? If yes, must match the entire line. Otherwise, the string need only occur somewhere within the line.");
         chkRegex.setEnabled(false);
         chkRegex.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        chkRegex.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkRegexActionPerformed(evt);
+            }
+        });
 
         btnFind.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnFind.setText("Find Files");
@@ -246,6 +314,22 @@ public class Main extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRootActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRootActionPerformed
+        setSearchRoot();
+    }//GEN-LAST:event_btnRootActionPerformed
+
+    private void chkLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkLineActionPerformed
+        setSearchLineEnabled(chkLine.isSelected());
+    }//GEN-LAST:event_chkLineActionPerformed
+
+    private void chkExcludeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkExcludeActionPerformed
+        setExcludeLineEnabled(chkExclude.isSelected());
+    }//GEN-LAST:event_chkExcludeActionPerformed
+
+    private void chkRegexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkRegexActionPerformed
+        setSearchByRegex(chkRegex.isSelected());
+    }//GEN-LAST:event_chkRegexActionPerformed
 
     /**
      * @param args the command line arguments
