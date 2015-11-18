@@ -5,6 +5,7 @@
  */
 package filesearcher.forms;
 
+import filesearcher.data.FileHandler;
 import wheeler.generic.data.DialogFactory;
 
 /**
@@ -18,6 +19,16 @@ public class Main extends javax.swing.JFrame {
      */
     public Main() {
         initComponents();
+        initialize();
+    }
+    
+    private void initialize(){
+        try{
+            if (!FileHandler.testProgramFolder(this)) System.exit(0);
+        }
+        catch(Exception e){
+            DialogFactory.errorMsg(this, "An error occurred initializing the program", e, 1, 0);
+        }
     }
     
     /**
