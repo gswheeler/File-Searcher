@@ -17,16 +17,16 @@ import wheeler.generic.structs.StringSimpleList;
 public class Parameters {
     
     // File parameters
-    String searchRoot;
-    String[] includeFiles = null; String[] excludeFiles = null;
-    String[] includePaths = null; String[] excludePaths = null;
-    String[] includeTypes = null; String[] excludeTypes = null;
+    public String searchRoot;
+    public String[] includeFiles = null; public String[] excludeFiles = null;
+    public String[] includePaths = null; public String[] excludePaths = null;
+    public String[] includeTypes = null; public String[] excludeTypes = null;
     // Line parameters
-    boolean searchLines = false;  String line = null;
-    boolean excludeLines = false; String exclude = null;
-    boolean hideLines = false;
-    boolean checkCase = false;
-    boolean useRegex = false;
+    public boolean searchLines = false;  public String line = null;
+    public boolean excludeLines = false; public String exclude = null;
+    public boolean hideLines = false;
+    public boolean checkCase = false;
+    public boolean useRegex = false;
     
     /**
      * Don't allow this object to be created on the fly; use the static creator methods instead
@@ -34,6 +34,7 @@ public class Parameters {
     private Parameters(){
         // Nothing done here
     }
+    
     
     /**
      * Used by the main interface. Starts off with the fundamental parameters.
@@ -73,6 +74,7 @@ public class Parameters {
         return parameters;
     }
     
+    
     /**
      * Set the "Line" parameters. Only use this if lines are being looked for (assumes yes)
      * @param lineString The string provided as the "line" search parameter
@@ -87,6 +89,17 @@ public class Parameters {
         checkCase = caseChecked;
         useRegex = regex;
     }
+    
+    
+    /**
+     * Set the "Exclude" line parameters. Only use this if lines are being excluded (assumes yes)
+     * @param excludeString The string provided as the "exclude" search parameter
+     */
+    public void setExclude(String excludeString){
+        excludeLines = true;
+        exclude = excludeString;
+    }
+    
     
     /**
      * Splits a parameter string into "to include" and "to exclude"
