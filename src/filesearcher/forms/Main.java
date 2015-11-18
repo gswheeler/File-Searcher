@@ -5,8 +5,11 @@
  */
 package filesearcher.forms;
 
+import filesearcher.data.DataFactory;
 import filesearcher.data.FileHandler;
 import wheeler.generic.data.DialogFactory;
+import wheeler.generic.data.LogicHandler;
+import wheeler.generic.data.StringHandler;
 
 /**
  *
@@ -22,6 +25,11 @@ public class Main extends javax.swing.JFrame {
         initialize();
     }
     
+    
+    /**
+     * Initialize the program as necessary.
+     * Makes sure Program Files\Wheeler\File Searcher is accessible. If it isn't, closes the program.
+     */
     private void initialize(){
         try{
             if (!FileHandler.testProgramFolder(this)) System.exit(0);
@@ -31,14 +39,18 @@ public class Main extends javax.swing.JFrame {
         }
     }
     
+    
     /**
      * Ask the user to choose the root of the search
      */
-    private void setSearchRoot(){
-        String root = DialogFactory.chooseFolder(this, txtRoot.getText());
+    private void setSearchRoot(boolean chooseFile){
+        String root = (chooseFile)
+                ? DialogFactory.chooseFolder(this, txtRoot.getText()) // Our standard action
+                : DialogFactory.chooseFile(this, txtRoot.getText());  // For when we have a specific file in mind
         if (root == null) return;
         txtRoot.setText(root);
     }
+    
     
     /**
      * Enable/disable the "line" portion of the interface based on whether the search is for files or lines
@@ -54,6 +66,7 @@ public class Main extends javax.swing.JFrame {
         btnFind.setText((setEnabled) ? "Find Lines" : "Find Files");
     }
     
+    
     /**
      * Enable/disable the field for line exclusions
      * @param setEnabled Are lines being excluded from the results?
@@ -62,6 +75,7 @@ public class Main extends javax.swing.JFrame {
         txtExclude.setEnabled(setEnabled);
     }
     
+    
     /**
      * Set the line-field label according to the type of search string being provided
      * @param setEnabled Is the search being performed using a regular expression?
@@ -69,6 +83,34 @@ public class Main extends javax.swing.JFrame {
     private void setSearchByRegex(boolean setEnabled){
         lblLine.setText((setEnabled) ? "Line matches:" : "Line contains:");
     }
+    
+    
+    /**
+     * Starts the search.
+     * Collects/checks parameters, writes to params file, calls JAR file as seeker
+     */
+    private void startSearch() throws Exception{
+        // Make sure we're using the right kind of slashes
+        setSlashes(txtRoot); setSlashes(txtName); setSlashes(txtPath); setSlashes(txtTypes);
+        
+        // Call the DataFactory to handle the logic
+        DataFactory.startSearch(
+                txtRoot.getText(), txtName.getText(), txtPath.getText(), txtTypes.getText(),
+                chkLine.isSelected(), txtLine.getText(), chkExclude.isSelected(), txtExclude.getText(),
+                chkHide.isSelected(), chkCase.isSelected(), chkRegex.isSelected(), this
+            );
+    }
+    
+    
+    /**
+     * Set the slashes in a text field to the Windows filepath divider character.
+     * Changes '/' characters to '\' characters
+     * @param textField The textfield to set the slashes of.
+     */
+    private void setSlashes(javax.swing.JTextField textField){
+        textField.setText(StringHandler.replace(textField.getText(), "/", "\\", true));
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -108,6 +150,10 @@ public class Main extends javax.swing.JFrame {
         itmLoadLine = new javax.swing.JMenuItem();
         itmCopyLine = new javax.swing.JMenuItem();
         itmSaveLine = new javax.swing.JMenuItem();
+        menActions = new javax.swing.JMenu();
+        itmOpen = new javax.swing.JMenuItem();
+        itmCleanup = new javax.swing.JMenuItem();
+        itmClearJar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("File, Line Searcher");
@@ -124,6 +170,11 @@ public class Main extends javax.swing.JFrame {
 
         btnRoot.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnRoot.setText("Choose");
+        btnRoot.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRootMouseClicked(evt);
+            }
+        });
         btnRoot.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRootActionPerformed(evt);
@@ -199,6 +250,11 @@ public class Main extends javax.swing.JFrame {
 
         btnFind.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnFind.setText("Find Files");
+        btnFind.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFindActionPerformed(evt);
+            }
+        });
 
         btnOutput.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnOutput.setText("Open output file");
@@ -225,6 +281,19 @@ public class Main extends javax.swing.JFrame {
         menLine.add(itmSaveLine);
 
         barMenu.add(menLine);
+
+        menActions.setText("Actions");
+
+        itmOpen.setText("Open a file");
+        menActions.add(itmOpen);
+
+        itmCleanup.setText("Cleanup output files");
+        menActions.add(itmCleanup);
+
+        itmClearJar.setText("Clear JAR location");
+        menActions.add(itmClearJar);
+
+        barMenu.add(menActions);
 
         setJMenuBar(barMenu);
 
@@ -327,7 +396,7 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRootActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRootActionPerformed
-        setSearchRoot();
+        setSearchRoot(false);
     }//GEN-LAST:event_btnRootActionPerformed
 
     private void chkLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkLineActionPerformed
@@ -341,6 +410,19 @@ public class Main extends javax.swing.JFrame {
     private void chkRegexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkRegexActionPerformed
         setSearchByRegex(chkRegex.isSelected());
     }//GEN-LAST:event_chkRegexActionPerformed
+
+    private void btnRootMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRootMouseClicked
+        if (LogicHandler.clickIsRightClick(evt)) setSearchRoot(true);
+    }//GEN-LAST:event_btnRootMouseClicked
+
+    private void btnFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindActionPerformed
+        try{
+            startSearch();
+        }
+        catch(Exception e){
+            DialogFactory.errorMsg(this, "An error occurred starting the search", e, 1, 0);
+        }
+    }//GEN-LAST:event_btnFindActionPerformed
 
     /**
      * @param args the command line arguments
@@ -387,9 +469,12 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JCheckBox chkHide;
     private javax.swing.JCheckBox chkLine;
     private javax.swing.JCheckBox chkRegex;
+    private javax.swing.JMenuItem itmCleanup;
+    private javax.swing.JMenuItem itmClearJar;
     private javax.swing.JMenuItem itmCopyLine;
     private javax.swing.JMenuItem itmLoadLine;
     private javax.swing.JMenuItem itmLoadParameters;
+    private javax.swing.JMenuItem itmOpen;
     private javax.swing.JMenuItem itmSaveLine;
     private javax.swing.JMenuItem itmSaveParameters;
     private javax.swing.JLabel lblLine;
@@ -398,6 +483,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel lblRoot;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblTypes;
+    private javax.swing.JMenu menActions;
     private javax.swing.JMenu menLine;
     private javax.swing.JMenu menPresets;
     private javax.swing.JSeparator sepLine;

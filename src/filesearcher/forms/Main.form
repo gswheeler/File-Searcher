@@ -43,6 +43,28 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="menActions">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Actions"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="itmOpen">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Open a file"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="itmCleanup">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cleanup output files"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="itmClearJar">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Clear JAR location"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
       </SubComponents>
     </Menu>
   </NonVisualComponents>
@@ -220,6 +242,7 @@
         <Property name="text" type="java.lang.String" value="Choose"/>
       </Properties>
       <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnRootMouseClicked"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRootActionPerformed"/>
       </Events>
     </Component>
@@ -363,6 +386,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Find Files"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFindActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnOutput">
       <Properties>
