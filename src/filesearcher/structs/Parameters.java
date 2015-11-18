@@ -5,9 +5,13 @@
  */
 package filesearcher.structs;
 
+import filesearcher.data.FileHandler;
 import javax.swing.JFrame;
 import wheeler.generic.data.DialogFactory;
 import wheeler.generic.data.StringHandler;
+import wheeler.generic.data.readers.FileWriter;
+import wheeler.generic.logging.Logger;
+import wheeler.generic.structs.StringList;
 import wheeler.generic.structs.StringSimpleList;
 
 /**
@@ -102,7 +106,8 @@ public class Parameters {
     
     
     /**
-     * Splits a parameter string into "to include" and "to exclude"
+     * Splits a parameter string into "to include" and "to exclude".
+     * Uses space-delineation, drops empty strings.
      * @param paramString The string being split into "include" and "exclude"
      * @param paramType A text representation of the parameter type; used to make questions to the user specific to the parameter type
      * @param caller The interface; used to ask the user questions
@@ -117,6 +122,7 @@ public class Parameters {
         // Sort the parameters
         int dashesExclude = 0;
         for(String param : params){
+            if (param.length() < 1) continue; // Drop empty strings
             if(param.startsWith("-")){ // Possible exclusion
                 // Ask the user if dashes mean exclusion (allow user to cancel here)
                 if(dashesExclude == 0){
@@ -149,6 +155,108 @@ public class Parameters {
         result[0] = includeResult;
         result[1] = excludeResult;
         return result;
+    }
+    
+    
+    /* Parameters: file format
+        Root
+        Include-files (space-delineated)
+        Exclude-files (space-delineated)
+        Include-paths (space-delineated)
+        Exclude-paths (space-delineated)
+        Include-types (space-delineated)
+        Exclude-types (space-delineated)
+        0 or 1SearchString
+        0 or 1ExcludeString
+        options...
+            hideLines
+            checkCase
+            useRegex
+    */
+    
+    
+    /**
+     * Write the parameters of the search to a file that the searching process will find later
+     * @throws Exception If an exception occurs writing the file
+     */
+    public void writeParamsFile() throws Exception{
+        // Open the file for writing
+        FileWriter writer = new FileWriter(FileHandler.paramsFile());
+        
+        // Write the stuff that we know will be there
+        writer.writeLine(searchRoot);
+        writer.writeLine(StringHandler.concatStringArray(includeFiles, " "));
+        writer.writeLine(StringHandler.concatStringArray(excludeFiles, " "));
+        writer.writeLine(StringHandler.concatStringArray(includePaths, " "));
+        writer.writeLine(StringHandler.concatStringArray(excludePaths, " "));
+        writer.writeLine(StringHandler.concatStringArray(includeTypes, " "));
+        writer.writeLine(StringHandler.concatStringArray(excludeTypes, " "));
+        writer.writeLine( (searchLines) ? "1" + line    : "0" );
+        writer.writeLine((excludeLines) ? "1" + exclude : "0" );
+        
+        // Add extra lines for optional parameters
+        if (hideLines) writer.writeLine(hideLinesKeyword);
+        if (checkCase) writer.writeLine(checkCaseKeyword);
+        if (useRegex)  writer.writeLine(useRegexKeyword);
+        
+        // Close the file when done
+        writer.close();
+    }
+    
+    /** Keyword in the parameters file for the hide-lines option */
+    private static final String hideLinesKeyword = "hideLines";
+    /** Keyword in the parameters file for the check-case option */
+    private static final String checkCaseKeyword = "checkCase";
+    /** Keyword in the parameters file for the use-regular-expression option */
+    private static final String useRegexKeyword  = "useRegex";
+    
+    /**
+     * Derives a set of search parameters from the designated parameters file.
+     * @return A Parameters object holding the search parameters.
+     * @throws Exception If the file is missing or if the data is seriously mis-formatted
+     */
+    public static Parameters getParametersFromFile() throws Exception{
+        // Get the contents of the file
+        StringList contents = FileHandler.readFile(FileHandler.paramsFile(), true, true);
+        
+        // The Parameters object we will be returning
+        Parameters parameters = new Parameters();
+        
+        // Get the parameters we know will be there
+        parameters.searchRoot = contents.pullFirst();
+        parameters.includeFiles = StringHandler.parseIntoArray(contents.pullFirst(), " ");
+        parameters.excludeFiles = StringHandler.parseIntoArray(contents.pullFirst(), " ");
+        parameters.includePaths = StringHandler.parseIntoArray(contents.pullFirst(), " ");
+        parameters.excludePaths = StringHandler.parseIntoArray(contents.pullFirst(), " ");
+        parameters.includeTypes = StringHandler.parseIntoArray(contents.pullFirst(), " ");
+        parameters.excludeTypes = StringHandler.parseIntoArray(contents.pullFirst(), " ");
+        String line = contents.pullFirst();
+        if(line.startsWith("1")){ parameters.searchLines = true; parameters.line = line.substring(1); }
+        line = contents.pullFirst();
+        if(line.startsWith("1")){ parameters.excludeLines = true; parameters.exclude = line.substring(1); }
+        
+        // Get any optional parameters
+        while(contents.any()){
+            line = contents.pullFirst();
+            switch(line){
+                case hideLinesKeyword:
+                    parameters.hideLines = true;
+                    break;
+                case checkCaseKeyword:
+                    parameters.checkCase = true;
+                    break;
+                case useRegexKeyword:
+                    parameters.useRegex = true;
+                    break;
+                case "":
+                    break;
+                default:
+                    Logger.print("Did not recognize optional parameter \"" + line + "\"");
+            }
+        }
+        
+        // Have all the parameters: return them
+        return parameters;
     }
     
 }
