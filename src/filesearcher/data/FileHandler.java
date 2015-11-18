@@ -35,7 +35,7 @@ public class FileHandler extends wheeler.generic.data.FileHandler {
     public static String signalFile(String session) throws Exception{
         return composeFilepath(dataFolder(), "signal" + session + ".txt");
     }
-    public static String paramsFile(String session) throws Exception{
+    public static String paramsFile() throws Exception{
         return composeFilepath(dataFolder(), "params.txt");
     }
     
@@ -128,6 +128,11 @@ public class FileHandler extends wheeler.generic.data.FileHandler {
         // Write the contents
         writeFile(contents, true, autorunFile());
         return true;
+    }
+    
+    // Run the autorun file
+    public static void runAutorunFile() throws Exception{
+        runBatchFile(autorunFile());
     }
     
 }
