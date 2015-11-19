@@ -33,7 +33,7 @@ public class Main {
                 DataFactory.runSearch();
             }
             catch(Exception e){
-                Logger.print("A serious error occurred performing the search.");
+                Logger.print("A serious error occurred performing the search:");
                 Logger.print(e, 1, 0);
                 DialogFactory.pressEnterToContinue("Press Enter to continue...");
             }
