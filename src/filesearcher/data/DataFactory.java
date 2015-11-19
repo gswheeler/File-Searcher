@@ -114,4 +114,39 @@ public class DataFactory {
         }
     }
     
+    
+    public static void runSearch() throws Exception{
+        // Determine this search's session, create the signal file
+        String session = determineNextSession();
+        FileHandler.ensureFileExists(FileHandler.signalFile(session));
+        
+        // Grab the parameters from the cache file, delete said file
+        Parameters params = Parameters.getParametersFromFile();
+        FileHandler.deleteFile(FileHandler.paramsFile());
+        
+        // Run the search, leave it to open the output file when it's done
+        new SearchHandler(params).performSearch(session);
+        
+        // Delete the signal file to show we're done
+        FileHandler.deleteFile(FileHandler.signalFile(session));
+    }
+    
+    
+    /**
+     * Determine this search's session tag.
+     * @return An empty string if no other sessions are running, otherwise returns the lowest number not currently in use.
+     * @throws Exception if something goes wrong with the session folder.
+     */
+    public static String determineNextSession() throws Exception{
+        // Check the no-tag session
+        if (!FileHandler.fileExists(FileHandler.signalFile(""))) return "";
+        
+        // Look for the lowest number not currently in use
+        int session = 0;
+        while (FileHandler.fileExists(FileHandler.signalFile(Integer.toString(session)))) session++;
+        
+        // The signal file doesn't exist for this number; claim it
+        return Integer.toString(session);
+    }
+    
 }
