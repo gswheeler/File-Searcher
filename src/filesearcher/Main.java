@@ -5,6 +5,11 @@
  */
 package filesearcher;
 
+import filesearcher.data.DataFactory;
+import wheeler.generic.data.DialogFactory;
+import wheeler.generic.data.StringHandler;
+import wheeler.generic.logging.Logger;
+
 /**
  *
  * @author Greg
@@ -22,10 +27,24 @@ public class Main {
             return;
         }
         
-        // Called to perform a search
+        // Called by the main interface to perform a search
         if((args.length == 1) && (args[0].equals("seeker"))){
-            // 
+            try{
+                DataFactory.runSearch();
+            }
+            catch(Exception e){
+                Logger.print("A serious error occurred performing the search.");
+                Logger.print(e, 1, 0);
+                DialogFactory.pressEnterToContinue("Press Enter to continue...");
+            }
+            return;
         }
+        
+        // No idea
+        Logger.print(
+                "The program was called with arguments it didn't recognize:\n  "
+                        + StringHandler.concatStringArray(args, " ")
+            );
     }
     
 }
