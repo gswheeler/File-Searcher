@@ -185,12 +185,12 @@ public class Parameters {
         
         // Write the stuff that we know will be there
         writer.writeLine(searchRoot);
-        writer.writeLine(StringHandler.concatStringArray(includeFiles, " "));
-        writer.writeLine(StringHandler.concatStringArray(excludeFiles, " "));
-        writer.writeLine(StringHandler.concatStringArray(includePaths, " "));
-        writer.writeLine(StringHandler.concatStringArray(excludePaths, " "));
-        writer.writeLine(StringHandler.concatStringArray(includeTypes, " "));
-        writer.writeLine(StringHandler.concatStringArray(excludeTypes, " "));
+        writer.writeLine(StringHandler.concatArray(includeFiles, " "));
+        writer.writeLine(StringHandler.concatArray(excludeFiles, " "));
+        writer.writeLine(StringHandler.concatArray(includePaths, " "));
+        writer.writeLine(StringHandler.concatArray(excludePaths, " "));
+        writer.writeLine(StringHandler.concatArray(includeTypes, " "));
+        writer.writeLine(StringHandler.concatArray(excludeTypes, " "));
         writer.writeLine( (searchLines) ? "1" + line    : "0" );
         writer.writeLine((excludeLines) ? "1" + exclude : "0" );
         

@@ -43,7 +43,7 @@ public class Main {
         // No idea
         Logger.print(
                 "The program was called with arguments it didn't recognize:\n  "
-                        + StringHandler.concatStringArray(args, " ")
+                        + StringHandler.concatArray(args, " ")
             );
     }
     
