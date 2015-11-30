@@ -35,7 +35,7 @@ public class Parameters {
     /**
      * Don't allow this object to be created on the fly; use the static creator methods instead
      */
-    private Parameters(){
+    protected Parameters(){
         // Nothing done here
     }
     
