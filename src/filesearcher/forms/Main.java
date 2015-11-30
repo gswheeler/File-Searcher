@@ -108,7 +108,7 @@ public class Main extends javax.swing.JFrame {
      * @param textField The textfield to set the slashes of.
      */
     private void setSlashes(javax.swing.JTextField textField){
-        textField.setText(StringHandler.replace(textField.getText(), "/", "\\", true));
+        textField.setText(FileHandler.setSlashes(textField.getText()));
     }
     
 

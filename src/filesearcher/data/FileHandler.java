@@ -135,4 +135,15 @@ public class FileHandler extends wheeler.generic.data.FileHandler {
         runBatchFile(autorunFile());
     }
     
+    
+    /**
+     * Set the slashes in a String to the Windows filepath divider character.
+     * Changes '/' characters to '\' characters
+     * @param text The String to set the slashes of.
+     * @return The provided string with all slashes facing the right direction
+     */
+    public static String setSlashes(String text){
+        return StringHandler.replace(text, "/", "\\", true);
+    }
+    
 }
