@@ -44,7 +44,7 @@ public class Main extends javax.swing.JFrame {
      * Ask the user to choose the root of the search
      */
     private void setSearchRoot(boolean chooseFile){
-        String root = (chooseFile)
+        String root = (!chooseFile)
                 ? DialogFactory.chooseFolder(this, txtRoot.getText()) // Our standard action
                 : DialogFactory.chooseFile(this, txtRoot.getText());  // For when we have a specific file in mind
         if (root == null) return;
