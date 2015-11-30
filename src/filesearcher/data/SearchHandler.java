@@ -273,7 +273,7 @@ public class SearchHandler {
      */
     protected boolean filepathMatches(String filepath, boolean isFolder){
         // Check for a match in any exclusion criteria
-        String name = FileHandler.getFileName("\\" + filepath);
+        String name = "\\" + FileHandler.getFileName(filepath);
         for(String exclude : params.excludeFiles){
             if (StringHandler.contains(name, exclude, false)) return false;
         }
@@ -301,7 +301,7 @@ public class SearchHandler {
         if(params.includeTypes.length == 0){
             if(isFolder){
                 // No includes or excludes validates folders
-                // If there were excludes, need to have folders included (problem is, we're here because there aren't any includes)
+                // If there were excludes, need to have folders included (problem is, we're here because there aren't any inclusions)
                 return (params.excludeTypes.length == 0);
             }else{
                 // Zero includes and no matching excludes validates files
@@ -316,6 +316,7 @@ public class SearchHandler {
                 if (filepath.toLowerCase().endsWith(match.toLowerCase())) return true;
             }
         }
+        // There were types specified but none of them matched
         return false;
     }
     
