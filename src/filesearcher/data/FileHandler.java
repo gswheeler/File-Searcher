@@ -56,12 +56,14 @@ public class FileHandler extends wheeler.generic.data.FileHandler {
         return path;
     }
     public static String sessionFolder() throws Exception{
-        return composeFilepath(configFolder(), "session");
+        String path = composeFilepath(configFolder(), "session");
+        ensureFolderExists(path);
+        return path;
     }
     public static String lineFile() throws Exception{
         return composeFilepath(configFolder(), "line.txt");
     }
-    protected static String jarFile() throws Exception{
+    protected static String jarLocationFile() throws Exception{
         return composeFilepath(configFolder(), "jar.txt");
     }
     
@@ -76,9 +78,9 @@ public class FileHandler extends wheeler.generic.data.FileHandler {
         // Have we set the location yet?
         String jarLocation;
         if (_jarLocation == null){
-            if (fileExists(jarFile())){
+            if (fileExists(jarLocationFile())){
                 // Have we previously pointed out the location?
-                jarLocation = readFile(jarFile(), true, true).getFirst();
+                jarLocation = readFile(jarLocationFile(), true, true).getFirst();
             }else{
                 // Guess our default location
                 jarLocation = defaultJarFile();
@@ -109,7 +111,7 @@ public class FileHandler extends wheeler.generic.data.FileHandler {
         }
         
         // Store the location for later (even if it's our default)
-        writeToFile(jarLocation, jarFile());
+        writeToFile(jarLocation, jarLocationFile());
         _jarLocation = jarLocation;
         return _jarLocation;
     }
