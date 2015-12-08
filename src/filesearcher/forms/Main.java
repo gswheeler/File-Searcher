@@ -9,7 +9,6 @@ import filesearcher.data.DataFactory;
 import filesearcher.data.FileHandler;
 import wheeler.generic.data.DialogFactory;
 import wheeler.generic.data.LogicHandler;
-import wheeler.generic.data.StringHandler;
 
 /**
  *
