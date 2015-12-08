@@ -55,8 +55,8 @@ public class FileHandler extends wheeler.generic.data.FileHandler {
         ensureFolderExists(path);
         return path;
     }
-    public static String sessionFolder() throws Exception{
-        String path = composeFilepath(configFolder(), "session");
+    public static String presetsFolder() throws Exception{
+        String path = composeFilepath(configFolder(), "presets");
         ensureFolderExists(path);
         return path;
     }
