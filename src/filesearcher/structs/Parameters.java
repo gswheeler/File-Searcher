@@ -113,7 +113,7 @@ public class Parameters {
      * @param caller The interface; used to ask the user questions
      * @return A two-item array of arrays of strings; the first is the list of strings to include, the second the list of strings to to exclude. Returns null if the user cancels.
      */
-    private static String[][] getIncludeExclude(String paramString, String paramType, JFrame caller){
+    protected static String[][] getIncludeExclude(String paramString, String paramType, JFrame caller){
         // Collection variables
         String[] params = StringHandler.parseIntoArray(paramString, " ");
         StringSimpleList includes = new StringSimpleList();
@@ -131,6 +131,8 @@ public class Parameters {
                             "Do dashes indicate exclusion?");
                     if (dashesExclude == 0) return null;
                 }
+                // If excluding, make sure we aren't adding an empty string
+                if ((dashesExclude > 0) && (param.length() < 2)) continue;
                 // If excluding, remove the leading dash; otherwise leave it be
                 excludes.add((dashesExclude > 0) ? param.substring(1) : param);
             }else{ // Definite include
