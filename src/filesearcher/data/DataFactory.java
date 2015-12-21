@@ -15,7 +15,7 @@ import wheeler.generic.data.StringHandler;
  */
 public class DataFactory {
     
-    /**
+    /**Called from the main process by the main interface.
      * Take in the search parameters, get the autorun and params files in place, call the autorun file.
      * @param root The search root
      * @param files The filename search parameters (raw interface string)
@@ -115,6 +115,10 @@ public class DataFactory {
     }
     
     
+    /**Called from a search sub-process by the Main function.
+     * Determines what the current session is and runs the search.
+     * @throws Exception If there is a problem handling the search files (as opposed to the "searched" files)
+     */
     public static void runSearch() throws Exception{
         // Determine this search's session, create the signal file
         String session = determineNextSession();
