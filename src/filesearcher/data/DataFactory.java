@@ -78,7 +78,7 @@ public class DataFactory {
             int lineIsRegex = LogicHandler.isStringARegularExpression(line);
             boolean warn = ((useRegex && (lineIsRegex == -1)) || (!useRegex && (lineIsRegex == 1)));
             
-            // If we're excluding lines, see of the provided exclusion string matches the expected format
+            // If we're excluding lines, see if the provided exclusion string matches the expected format
             if(excludeLines){
                 // Check that we have an exclusion string
                 if(exclude.length() < 1){
@@ -97,6 +97,26 @@ public class DataFactory {
                         ? "Your regular expression doesn't look like one. Continue?"
                         : "Your search string looks like a regular expression. Continue?";
                 if (!DialogFactory.optionYesNo(caller, message)) return;
+            }
+            
+            // If we're testing a regular expression and the provided regular expression(s) result in [an] error(s), warn the user about it
+            if(useRegex){
+                try{
+                    "Test string".matches(line);
+                }
+                catch(Exception e){
+                    DialogFactory.errorMsg(caller, "The search expression threw an error", e, 0, 0);
+                    return;
+                }
+                if(excludeLines){
+                    try{
+                        "Test string".matches(exclude);
+                    }
+                    catch(Exception e){
+                        DialogFactory.errorMsg(caller, "The exclusion expression threw an error", e, 0, 0);
+                        return;
+                    }
+                }
             }
         }
         
