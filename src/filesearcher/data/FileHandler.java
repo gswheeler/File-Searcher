@@ -121,7 +121,7 @@ public class FileHandler extends wheeler.generic.data.FileHandler {
     public static boolean writeAutorunFile(JFrame caller) throws Exception{
         // Our two-line autorun file
         StringList contents =
-                new StringList("java -jar " + StringHandler.addQuotes(getJarLocation(caller) + " seeker"))
+                new StringList("java -jar " + StringHandler.addQuotes(getJarLocation(caller)) + " seeker")
                         .add("exit");
         
         // See if the file already exists and has the correct contents
