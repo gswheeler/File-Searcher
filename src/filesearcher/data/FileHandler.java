@@ -11,8 +11,7 @@ import wheeler.generic.data.StringHandler;
 import wheeler.generic.structs.StringList;
 
 /**
- *
- * @author Greg
+ * Contains static methods used to handle file I/O operations
  */
 public class FileHandler extends wheeler.generic.data.FileHandler {
     
